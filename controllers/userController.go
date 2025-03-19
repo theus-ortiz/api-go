@@ -51,7 +51,7 @@ func CreateUser(c *gin.Context) {
     user := models.User{}
     if err := user.CreateUser(userReq); err != nil {
         logger.Error(
-            "Error trying to create user",
+            "Error trying to create user in database",
             err,
             zap.String("journey", "createUser"),
         )

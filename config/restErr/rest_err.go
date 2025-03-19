@@ -77,3 +77,12 @@ func NewEmailAlreadyExistsError(message string, causes []Causes) *RestErr {
 		Causes:  causes,
     }
 }
+
+func NewUnauthorizedError(message string, causes []Causes) *RestErr {
+	return &RestErr{
+		Message: message,
+		Err:     "unauthorized",
+		Code:    http.StatusUnauthorized,
+		Causes:  causes,
+	}
+}

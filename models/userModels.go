@@ -1,9 +1,10 @@
 package models
 
 import (
+	"database/sql"
 	"time"
 
-	"github.com/theus-ortiz/api-go/config/restErr"
+	rest_err "github.com/theus-ortiz/api-go/config/restErr"
 	"github.com/theus-ortiz/api-go/config/validation"
 	"github.com/theus-ortiz/api-go/db"
 	"github.com/theus-ortiz/api-go/models/requests"
@@ -47,6 +48,20 @@ func GetAllUsers() ([]User, error) {
 	return users, nil
 }
 
+func FindUserByEmail(email string) (*User, error) {
+	var user User
+	query := "SELECT id, email, password FROM users WHERE email = ?"
+	row := db.InitDB().QueryRow(query, email)
+	err := row.Scan(&user.ID, &user.Email, &user.Password)
+	if err == sql.ErrNoRows {
+		return nil, err
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (u *User) CreateUser(userReq requests.UserRequest) *rest_err.RestErr {
 	// Gera o hash da senha
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userReq.Password), bcrypt.DefaultCost)
@@ -65,6 +80,7 @@ func (u *User) CreateUser(userReq requests.UserRequest) *rest_err.RestErr {
 	_, err = stmt.Exec(userReq.Name, userReq.Email, string(hashedPassword))
 	if err != nil {
 		// Trata o erro usando a função ValidateUserError
+		// fmt.Println(err)
 		return validation.ValidateUserError(err)
 	}
 
