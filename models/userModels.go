@@ -3,8 +3,9 @@ package models
 import (
 	"time"
 
-	rest_err "github.com/theus-ortiz/api-go/config/restErr"
-	db "github.com/theus-ortiz/api-go/db"
+	"github.com/theus-ortiz/api-go/config/restErr"
+	"github.com/theus-ortiz/api-go/config/validation"
+	"github.com/theus-ortiz/api-go/db"
 	"github.com/theus-ortiz/api-go/models/requests"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -63,9 +64,10 @@ func (u *User) CreateUser(userReq requests.UserRequest) *rest_err.RestErr {
 	// Executa o statement
 	_, err = stmt.Exec(userReq.Name, userReq.Email, string(hashedPassword))
 	if err != nil {
-		return rest_err.NewInternalServerError("Failed to execute SQL statement")
+		// Trata o erro usando a função ValidateUserError
+		return validation.ValidateUserError(err)
 	}
 
-	// Retorna nil para indicar que o usuário foi criado com sucesso
 	return nil
+
 }

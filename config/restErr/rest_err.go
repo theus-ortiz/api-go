@@ -69,10 +69,11 @@ func NewForbiddenError(message string) *RestErr {
 	}
 }
 
-func NewEmailAlreadyExistsError(message string) *RestErr {
+func NewEmailAlreadyExistsError(message string, causes []Causes) *RestErr {
     return &RestErr{
         Message: message,
         Err:     "email_already_exists",
         Code:    http.StatusConflict,
+		Causes:  causes,
     }
 }
