@@ -33,17 +33,20 @@ func init() {
 	log, _ = logConfig.Build()
 }
 
+// Info registra uma mensagem de informação
 func Info(message string, tags ...zap.Field) {
 	log.Info(message, tags...)
 	log.Sync()
 }
 
+// Error registra uma mensagem de erro
 func Error(message string, err error, tags ...zap.Field) {
 	tags = append(tags, zap.NamedError("error", err))
-	log.Info(message, tags...)
+	log.Error(message, tags...)
 	log.Sync()
 }
 
+// getOutputLogs retorna o destino dos logs
 func getOutputLogs() string {
 	output := strings.ToLower(strings.TrimSpace(os.Getenv(LOG_OUTPUT)))
 	if output == "" {
@@ -53,11 +56,12 @@ func getOutputLogs() string {
 	return output
 }
 
+// getLevelLogs retorna o nível de log configurado
 func getLevelLogs() zapcore.Level {
 	switch strings.ToLower(strings.TrimSpace(os.Getenv(LOG_LEVEL))) {
 	case "info":
 		return zapcore.InfoLevel
-	case  "error":
+	case "error":
 		return zapcore.ErrorLevel
 	case "debug":
 		return zapcore.DebugLevel
